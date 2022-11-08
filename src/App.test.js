@@ -1,8 +1,12 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import { Model } from './model/Model.js';
+//default puzzle to use
+import {level1} from './model/Puzzle.js';
+var firstLevel = JSON.parse(JSON.stringify(level1));
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+var model = new Model(firstLevel);
+
+test('No moves when mode created', () => {
+  expect(model.numMoves).toBe(0);
 });
