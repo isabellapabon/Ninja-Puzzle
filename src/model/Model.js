@@ -1,18 +1,11 @@
-import { toHaveDisplayValue } from "@testing-library/jest-dom/dist/matchers";
-import {BOXSIZE, OFFSET} from '../const.js'
+import {BOXSIZE, KEYSIZE, KEYOFFSET, OFFSET} from '../const.js'
 import {Square} from '../boundary/boundary.js';
 
 export class MoveType{
-    constructor(dr, dc){
+    constructor(dr, dc, direction){
         this.deltar = dr;
         this.deltac = dc;
-    }
-    static parse(s) {
-        if ((s === "down") || (s === "Down")) {return Down;}
-        if ((s === "up") || (s === "Up")) {return Up;}
-        if ((s === "right") || (s === "Right")) {return Right;}
-        if ((s === "left") || (s === "Left")) {return Left;}
-        return NoMove;
+        this.direction = direction;
     }
 }
 
@@ -30,74 +23,143 @@ export class Coordinate {
     }
 }
 
-
-export class Ninjase {
-    constructor(row, column, key){
+export class Cell {
+    constructor(row, column, color = 'clear'){
         this.row = row;
         this.column = column;
-        this.key = column;
+        this.color = color;
     }
     location() {
         return new Coordinate(this.row, this.column);
     }
-    compute(){
+    whatType() {
+        return 'cell';
+    }
+
+    place(row, column) {
+        this.row = row;
+        this.column = column;
+    }
+    compute() {
         let c = this.location();
+        if(this.whatType() === 'key'){
+            return new Square(BOXSIZE*c.column - KEYOFFSET + KEYSIZE, BOXSIZE*c.row - KEYOFFSET + KEYSIZE, BOXSIZE - 2*KEYOFFSET - KEYSIZE, BOXSIZE - 2*KEYOFFSET - KEYSIZE)
+        }
         return new Square(BOXSIZE*c.column + OFFSET, BOXSIZE*c.row + OFFSET, BOXSIZE - 2*OFFSET, BOXSIZE - 2*OFFSET)
     }
+
     draw(ctx) {
-        ctx.fillStyle = 'purple'
+        if(this.whatType() === 'wall')
+        {
+           ctx.fillStyle = 'black'; 
+        }
+        ctx.fillStyle = this.color;
         let sq = this.compute();
         ctx.beginPath();
         ctx.rect(sq.x, sq.y, sq.size, sq.size);
         ctx.fill();   
     }
-    
 }
 
-export class Wall {
-    constructor(row, column, color){
-        this.row = row;
-        this.column = column;
-    }
-    location() {
-        return new Coordinate(this.row, this.column);
-    }
-
-}
-
-export class Door {
-    constructor(color, row, column){
-        this.color = color;
-        this.row = row;
-        this.column = column;
-    }
-    location() {
-        return new Coordinate(this.row, this.column);
-    }
-    
-}
-
-export class Key {
-    constructor(row, column, color){
-
-        this.color = color;
-        this.row = row;
-        this.column = column;
-        
-    }
-    location() {
-        return new Coordinate(this.row, this.column);
-    }
-    
-
-}
-
-export class Cell {
+export class Ninjase extends Cell {
     constructor(row, column){
-        this.row = row;
-        this.column = column;
+        super(row, column, 'purple')
+        this.key = null;
+    }
+    move(cell, direction) {
+        if(this.canMoveTo(cell)) {
+            this.row += direction.deltar;
+            this.column += direction.deltac;
+            if(cell.type() === 'key'){
+                let oldKey = this.pickUpKey(cell);
+                if(oldKey != null){
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    haveKey(){
+        return this.key != null;
+    }
+
+    pickUpKey(key){
+        key.swap(this.key);
+        this.key = key;
+    }
+
+    canMoveTo(cell){
+        if(cell.whatType() === 'cell' ||
+            cell.whatType() === 'key'){
+            return true;
+        }
+        if(cell.type() === 'door'){
+            if(cell.unlock(this.key)){
+                this.key = null;
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 }
+
+export class Wall extends Cell{
+    constructor(row, column){
+        super(row, column);
+    }
+    whatType(){
+        return 'wall';
+    }
+}
+
+export class Door extends Cell{
+    constructor(color, row, column){
+        super(row, column, color);
+        this.locked = true;
+        this.type = 'door';
+    }
+    isLocked(){
+        return this.locked;
+    }
+    unlock(key){
+        if(key === null){
+            return false;
+        }
+        if(key.getColor() === this.color){
+            this.locked = false;
+            this.type = 'cell';
+            return true;
+        }
+        return false;
+    }
+    whatType(){
+        return this.type;
+    }
+}
+
+export class Key extends Cell{
+    constructor(color, row, column){
+        super(row, column, color);
+        this.type = 'key';
+    }
+    swap(key){
+        if(key === null){
+            this.type = 'cell';
+        }
+        else{
+            this.color = key.getColor();
+        }
+    }
+    getColor(){
+        return this.color;
+    }
+    whatType(){
+        return this.type;
+    }
+}
+
 
 export class Puzzle {
     constructor(nr, nc, ninjase, walls, doors, keys){
@@ -116,10 +178,11 @@ export class Puzzle {
             for(let column = 0; column < 5; column++){
                 this.cells[row][column] = new Cell(row, column);
             }
+        
         }
     }
-}
 
+}
 
 // Model knows level and puzzle
 export class Model {
@@ -157,5 +220,7 @@ export class Model {
         this.showLabels = false;
         this.ninjase = ninjase;
         this.doors = doors;
+        this.keys = keys;
+        this.walls = walls;
     }
 }

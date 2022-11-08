@@ -10,26 +10,7 @@ export class Square {
 }
 
 export function computeSquare(cell){
-    console.log('Boxsize equals %d', BOXSIZE);
-    console.log('Offset equals %d', OFFSET);
     return new Square(BOXSIZE*cell.column + OFFSET, BOXSIZE*cell.row + OFFSET, BOXSIZE - 2*OFFSET, BOXSIZE-2*OFFSET)
-}
-
-
-export function computeDoor(door){
-    let c = door.location();
-    return new Square(BOXSIZE*c.column + OFFSET, BOXSIZE*c.row + OFFSET, BOXSIZE - 2*OFFSET, BOXSIZE - 2*OFFSET)
-}
-
-/* Method draws NinjaSe */
-
-
-export function drawDoors(ctx, door) {
-    ctx.fillStyle = door.color;
-    let sq = computeDoor(door);
-    ctx.beginPath();
-    ctx.rect(sq.x, sq.y, sq.size, sq.size);
-    ctx.fill();  
 }
 
 /* Method that redraws entire canvas from model. */
@@ -53,10 +34,18 @@ export function redrawCanvas(model, canvasObj) {
             ctx.stroke();
         }
     }
-    
+
     model.ninjase.draw(ctx);
     model.doors.forEach(door => { 
-        drawDoors(ctx,door);
+        door.draw(ctx);
+    });
+
+    model.keys.forEach(key =>{
+        key.draw(ctx);
+    });
+
+    model.walls.forEach(wall =>{
+        wall.draw(ctx);
     });
 
 }

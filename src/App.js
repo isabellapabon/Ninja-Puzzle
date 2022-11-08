@@ -27,12 +27,18 @@ function App() {
         width  = {layout.canvas.width}
         height = {layout.canvas.height} 
         />
-      <label style = {layout.text}>{"number moves: " + model.numMoves} </label>
+      <label style = {layout.text}>{"Number of moves: " + model.numMoves} </label>
       <div style = {layout.buttons}>
       <button style={layout.upbutton}>&#8593;</button>
       <button style={layout.leftbutton}>&#8592;</button>
       <button style ={layout.rightbutton}>&#8594;</button>
       <button style={layout.downbutton}>&#8595;</button>
+      <button style={layout.pickUpKeyButton}>&#8711;</button>
+      <button style={layout.resetButton}>Reset</button>
+      <button style={layout.level1Button}>Level One</button>
+      <button style={layout.level2Button}>Level Two</button>
+      <button style={layout.level3Button}>Level Three</button>
+
       </div>
       
     </main>
