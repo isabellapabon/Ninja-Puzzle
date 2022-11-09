@@ -27,7 +27,8 @@ function App() {
         width  = {layout.canvas.width}
         height = {layout.canvas.height} 
         />
-      <label style = {layout.text}>{"Number of moves: " + model.numMoves} </label>
+      <label style = {layout.moveCount}>{"Number of moves: " + model.numMoves} </label>
+      <label style = {layout.ninjaseKey}>{"Key that Ninjase is holding: "}</label>
       <div style = {layout.buttons}>
       <button style={layout.upbutton}>&#8593;</button>
       <button style={layout.leftbutton}>&#8592;</button>

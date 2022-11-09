@@ -10,67 +10,75 @@ export const layout = {
         width: "100vw",
     },
 
-    text : {
+      moveCount : {
         position: "absolute",
         left: 300,
         top: 530,
         color: "black",
         backgroundColor: "#FFFFFF",
-        width: 80
+        width: 100
     },
+      ninjaseKey : {
+      position: "absolute",
+      left: 50,
+      top: 530,
+      color: "black",
+      backgroundColor: "#FFFFFF",
+      width: 150
+   },
 
 // you might try this quick and dirty way to position buttons where you want (and other elements)
 upbutton : {
     position: "absolute",
-    left: 500,
+    left: 560,
     top: 80,
   },
   
 leftbutton : {
     position: "absolute",
-    left: 450,
+    left: 510,
     top: 120,
   },
   
   rightbutton : {
     position: "absolute",
-    left: 540,
+    left: 600,
     top: 120,
   },
   
   downbutton : {
     position: "absolute",
-    left: 500,
+    left: 560,
     top: 160
   },
 
   pickUpKeyButton : {
     position: "absolute",
-    left: 500,
+    left: 560,
     top: 120,
   },
 
   resetButton : {
     position: "absolute",
-    left: 430,
+    left: 550,
     top: 10,
   },
 
   level1Button : {
     position: "absolute",
-    left: 500,
+    left: 700,
     top: 10,
   },
 
   level2Button : {
     position: "absolute",
-    left: 600,
+    left: 800,
     top: 10,
   },
 
   level3Button : {
     position: "absolute",
-    left: 700,
+    left: 900,
     top: 10,
   },
 
