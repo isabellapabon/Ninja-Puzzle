@@ -19,14 +19,14 @@ export function redrawCanvas(model, canvasObj) {
     ctx.clearRect(0,0, canvasObj.width, canvasObj.height);
 
     // showing outermost information 
-    let nr = model.puzzle.nr
-    let nc = model.puzzle.nc
+    let nr = model.nr
+    let nc = model.nc
 
     ctx.fillStyle = 'black'
 
     for(let row = 0; row < nr; row++){
         for(let column = 0; column < nc; column++){
-            let cell = model.puzzle.cells[row][column]
+            let cell = model.cells[row][column]
             let sq = computeSquare(cell)
             // Heres you draw everything that you know about cell
             ctx.beginPath();
@@ -40,7 +40,7 @@ export function redrawCanvas(model, canvasObj) {
         door.draw(ctx);
     });
 
-    model.keys.forEach(key =>{
+    model.keys.forEach(key => {
         key.draw(ctx);
     });
 

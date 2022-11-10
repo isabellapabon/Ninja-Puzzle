@@ -21,6 +21,15 @@ export class Coordinate {
         this.row = row;
         this.column = column;
     }
+    getCoordinateForDirection(direction){
+        let row = this.row + direction.deltar;
+        let column = this.column + direction.deltac;
+        return new Coordinate(row, column);
+    }
+
+    isEqual(coordinate){
+        return this.row === coordinate.row && this.column === coordinate.column;
+    }
 }
 
 export class Cell {
@@ -68,13 +77,11 @@ export class Ninjase extends Cell {
     }
     move(cell, direction) {
         if(this.canMoveTo(cell)) {
+            if(cell.whatType() === 'key'){
+                this.pickUpKey(cell);
+            }
             this.row += direction.deltar;
             this.column += direction.deltac;
-            if(cell.type() === 'key'){
-                let oldKey = this.pickUpKey(cell);
-                if(oldKey != null){
-                }
-            }
             return true;
         }
         return false;
@@ -82,6 +89,13 @@ export class Ninjase extends Cell {
 
     haveKey(){
         return this.key != null;
+    }
+
+    getKeyMessage(){
+        if(this.haveKey()){
+            return "Holding " + this.key.getColor() + " key";
+        }
+        return "Holding no key";
     }
 
     pickUpKey(key){
@@ -149,7 +163,9 @@ export class Key extends Cell{
             this.type = 'cell';
         }
         else{
+            let color = this.color;
             this.color = key.getColor();
+            key.color = color;
         }
     }
     getColor(){
@@ -158,29 +174,6 @@ export class Key extends Cell{
     whatType(){
         return this.type;
     }
-}
-
-
-export class Puzzle {
-    constructor(nr, nc, ninjase, walls, doors, keys){
-        this.nr = nr;
-        this.nc = nc;
-        this.ninjase = ninjase;
-        this.walls = walls;
-        this.doors = doors;
-        this.keys = keys;
-
-        this.cells = [];
-
-    //this is where you would create the nr x nc Cell objects
-        for(let row = 0; row < nr; row++){
-            this.cells[row] = [];
-            for(let column = 0; column < 5; column++){
-                this.cells[row][column] = new Cell(row, column);
-            }
-        
-        }
-    }
 
 }
 
@@ -188,12 +181,10 @@ export class Puzzle {
 export class Model {
     // info is a json encoded puzzle
     constructor(level){
-        this.intialize(level);
+        this.initialize(level);
     }
 
-    intialize(level){
-        let nr = level.rows;
-        let nc = level.columns;
+    initialize(level){
         let ninjase = new Ninjase(level.ninjase.row, level.ninjase.column);
         let walls = []
         let keys = []
@@ -214,7 +205,6 @@ export class Model {
             doors.push(door)
         })
     
-        this.puzzle = new Puzzle(nr, nc, ninjase, walls, doors, keys);
         this.numMoves = 0;
         this.victory = false;
         this.showLabels = false;
@@ -222,5 +212,50 @@ export class Model {
         this.doors = doors;
         this.keys = keys;
         this.walls = walls;
+        this.nr = level.rows;
+        this.nc = level.columns;
+
+        this.cells = [];
+
+    //this is where you would create the nr x nc Cell objects
+        for(let row = 0; row < this.nr; row++){
+            this.cells[row] = [];
+            for(let column = 0; column < this.nc; column++){
+                this.cells[row][column] = new Cell(row, column);
+            }
+        }
+    }
+
+    numberMoves(){
+        return this.numMoves;
+    }
+
+    ninjaMove(direction){
+        if(this.ninjase.move(this.getCell(direction), direction)){
+            this.numMoves++;
+        }
+    }
+
+
+    getCell(direction){
+        let location = this.ninjase.location();
+        let directionCoordinate = location.getCoordinateForDirection(direction);
+        this.doors.forEach(door => { 
+            if(door.location().isEqual(directionCoordinate)){
+                return door;
+            }
+        });
+        this.keys.forEach(key => {
+            if(key.location().isEqual(directionCoordinate)){
+                return key;
+            }
+        });
+        this.walls.forEach(wall => {
+            if(wall.location().isEqual(directionCoordinate)){
+                return wall;
+            }
+        });
+
+        return this.cells[directionCoordinate.row][directionCoordinate.column];
     }
 }

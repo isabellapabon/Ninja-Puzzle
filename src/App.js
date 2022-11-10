@@ -1,10 +1,14 @@
 import React from 'react';
-import { level1 } from './model/Puzzle'
-import { level2 } from './model/Puzzle'
-import { level3 } from './model/Puzzle'
+import './App.css';
+import { level1 } from './model/Puzzle';
+import { level2 } from './model/Puzzle';
+import { level3 } from './model/Puzzle';
 import { redrawCanvas} from './boundary/boundary.js'
-import { Model } from './model/Model.js'
-import { layout, Layout } from './model/Layout'
+import { Model } from './model/Model.js';
+import { Up, Down, Left, Right } from './model/Model.js';
+import { moveNinja } from './controller/controller';
+import { layout, Layout } from './model/Layout';
+
 
 
 function App() {
@@ -17,7 +21,19 @@ function App() {
   React.useEffect (() => {
 
     redrawCanvas(model, canvasRef.current)
-  }, [model, redraw])   // arguments that determine when to refresh
+  }, [model, redraw]) // arguments that determine when to refresh
+
+  const handleClick = (e) => {
+    // console.log(e.screenX, e.screenY, e.clientX, e.clientY)
+    // ^^^^^ useful for logging specific events for testing purposes
+    forceRedraw(redraw+1)   // react to changes, if model has changed.
+  }
+
+  const moveNinjaHandler = (direction) => {
+    moveNinja(model, direction);
+    forceRedraw(redraw+1)   // react to changes, if model has changed.
+  }
+
 
   return (
     <main style ={layout.Appmain} ref={appRef}>
@@ -25,15 +41,16 @@ function App() {
         className="App-canvas"
         ref={canvasRef}
         width  = {layout.canvas.width}
-        height = {layout.canvas.height} 
+        height = {layout.canvas.height}
+        onClick={handleClick} 
         />
       <label style = {layout.moveCount}>{"Number of moves: " + model.numMoves} </label>
-      <label style = {layout.ninjaseKey}>{"Key that Ninjase is holding: "}</label>
+      <label style = {layout.ninjaseKey}>{model.ninjase.getKeyMessage()}</label>
       <div style = {layout.buttons}>
-      <button style={layout.upbutton}>&#8593;</button>
-      <button style={layout.leftbutton}>&#8592;</button>
-      <button style ={layout.rightbutton}>&#8594;</button>
-      <button style={layout.downbutton}>&#8595;</button>
+      <button style={layout.upbutton} onClick={(e) => moveNinjaHandler(Up)}>&#8593;</button>
+      <button style={layout.leftbutton} onClick={(e) => moveNinjaHandler(Left)}>&#8592;</button>
+      <button style ={layout.rightbutton} onClick={(e) => moveNinjaHandler(Right)}>&#8594;</button>
+      <button style={layout.downbutton}onClick={(e) => moveNinjaHandler(Down)}>&#8595;</button>
       <button style={layout.pickUpKeyButton}>&#8711;</button>
       <button style={layout.resetButton}>Reset</button>
       <button style={layout.level1Button}>Level One</button>
