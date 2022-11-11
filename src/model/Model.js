@@ -225,7 +225,7 @@ export class Model {
     }
 
     ninjaMove(direction){
-        // check if in bounds
+        
         let cell = this.getCell(direction)
         if(this.ninjase.move(cell, direction))
         {
@@ -284,5 +284,12 @@ export class Model {
                break;
             }
         }
+    }
+
+    getVictoryMessage(){
+        if(this.doors.length != 0){
+            return ""
+        }
+        return "Yay you solved it! Level completed."
     }
 }

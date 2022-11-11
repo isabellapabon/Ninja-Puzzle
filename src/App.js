@@ -12,7 +12,7 @@ import { layout, Layout } from './model/Layout';
 
 
 function App() {
-  const [model, setModel] = React.useState(new Model(level3));
+  const [model, setModel] = React.useState(new Model(level2));
   const [redraw, forceRedraw] = React.useState(0);       // used to conveniently request redraw after model change
   const appRef = React.useRef(null);      // need to be able to refer to App
   const canvasRef = React.useRef(null);   // need to be able to refer to Canvas
@@ -51,6 +51,7 @@ function App() {
         />
       <label style = {layout.moveCount}>{"Number of moves: " + model.numMoves} </label>
       <label style = {layout.ninjaseKey}>{model.ninjase.getKeyMessage()}</label>
+      <label style = {layout.victory}>{model.getVictoryMessage()}</label>
       <div style = {layout.buttons}>
       <button style={layout.upbutton} onClick={(e) => moveNinjaHandler(Up)}>&#8593;</button>
       <button style={layout.leftbutton} onClick={(e) => moveNinjaHandler(Left)}>&#8592;</button>

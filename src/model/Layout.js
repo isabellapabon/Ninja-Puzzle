@@ -27,6 +27,16 @@ export const layout = {
       width: 150
    },
 
+    victory : {
+    position: "absolute",
+    left: 510,
+    top: 300,
+    color: "black",
+    backgroundColor: "#fff0af",
+    width: 200
+    },
+
+
 // you might try this quick and dirty way to position buttons where you want (and other elements)
 upbutton : {
     position: "absolute",
