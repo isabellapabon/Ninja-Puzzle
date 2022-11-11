@@ -12,7 +12,7 @@ import { layout, Layout } from './model/Layout';
 
 
 function App() {
-  const [model, setModel] = React.useState(new Model(level1));
+  const [model, setModel] = React.useState(new Model(level3));
   const [redraw, forceRedraw] = React.useState(0);       // used to conveniently request redraw after model change
   const appRef = React.useRef(null);      // need to be able to refer to App
   const canvasRef = React.useRef(null);   // need to be able to refer to Canvas

@@ -93,8 +93,10 @@ export class Ninjase extends Cell {
     }
 
     pickUpKey(key){
-        key.swap(this.key);
+        let previousKey = this.key;
+        key.swap(previousKey);
         this.key = key;
+        return previousKey;
     }
 
     canMoveTo(cell){
@@ -152,14 +154,12 @@ export class Key extends Cell{
         super(row, column, color);
         this.type = 'key';
     }
-    swap(key){
-        if(key === null){
-            this.type = 'cell';
-        }
-        else{
-            let color = this.color;
-            this.color = key.getColor();
-            key.color = color;
+    swap(previousKey){
+        this.type = 'cell';
+        if(previousKey != null){
+            previousKey.type = 'key';
+            previousKey.row = this.row;
+            previousKey.column = this.column;
         }
     }
     getColor(){
@@ -276,8 +276,12 @@ export class Model {
         for(let i = 0; i < this.keys.length; i++){
             let key = this.keys[i];
             if(this.ninjase.location().isEqual(key.location())){
-               this.ninjase.pickUpKey(key);
+               let previousKey = this.ninjase.pickUpKey(key);
+               if(previousKey != null){
+                    this.keys.push(previousKey);
+               }
                this.keys.splice(i,1);
+               break;
             }
         }
     }
