@@ -82,7 +82,7 @@ export class Ninjase extends Cell {
     }
 
     haveKey(){
-        if(this.key != null);
+        return(this.key != null);
     }
 
     getKeyMessage(){
