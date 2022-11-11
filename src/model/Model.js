@@ -82,7 +82,7 @@ export class Ninjase extends Cell {
     }
 
     haveKey(){
-        return this.key != null;
+        if(this.key != null);
     }
 
     getKeyMessage(){
@@ -281,6 +281,7 @@ export class Model {
             let key = this.keys[i];
             if(this.ninjase.location().isEqual(key.location())){
                let previousKey = this.ninjase.pickUpKey(key);
+               this.numMoves++;
                if(previousKey != null){
                     this.keys.push(previousKey);
                }
