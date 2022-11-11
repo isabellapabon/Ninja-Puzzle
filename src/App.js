@@ -6,13 +6,13 @@ import { level3 } from './model/Puzzle';
 import { redrawCanvas} from './boundary/boundary.js'
 import { Model } from './model/Model.js';
 import { Up, Down, Left, Right } from './model/Model.js';
-import { moveNinja, pickUpKey } from './controller/controller';
+import { moveNinja, pickUpKey, changeLevel } from './controller/controller';
 import { layout, Layout } from './model/Layout';
 
 
 
 function App() {
-  const [model, setModel] = React.useState(new Model(level2));
+  const [model, setModel] = React.useState(new Model(level1));
   const [redraw, forceRedraw] = React.useState(0);       // used to conveniently request redraw after model change
   const appRef = React.useRef(null);      // need to be able to refer to App
   const canvasRef = React.useRef(null);   // need to be able to refer to Canvas
@@ -39,6 +39,11 @@ function App() {
     forceRedraw(redraw+1)
   }
 
+  const changeLevelHandler = (level) => {
+    changeLevel(model, level);
+    forceRedraw(redraw+1)
+  }
+
 
   return (
     <main style ={layout.Appmain} ref={appRef}>
@@ -58,10 +63,10 @@ function App() {
       <button style ={layout.rightbutton} onClick={(e) => moveNinjaHandler(Right)}>&#8594;</button>
       <button style={layout.downbutton}onClick={(e) => moveNinjaHandler(Down)}>&#8595;</button>
       <button style={layout.pickUpKeyButton}onClick={(e) => pickUpKeyHandler()}>&#8711;</button>
-      <button style={layout.resetButton}>Reset</button>
-      <button style={layout.level1Button}>Level One</button>
-      <button style={layout.level2Button}>Level Two</button>
-      <button style={layout.level3Button}>Level Three</button>
+      <button style={layout.resetButton}onClick={(e) => changeLevelHandler(model.currentLevel)}>Reset</button>
+      <button style={layout.level1Button}onClick={(e) => changeLevelHandler(level1)}>Level One</button>
+      <button style={layout.level2Button}onClick={(e) => changeLevelHandler(level2)}>Level Two</button>
+      <button style={layout.level3Button}onClick={(e) => changeLevelHandler(level3)}>Level Three</button>
 
       </div>
       

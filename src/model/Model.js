@@ -208,6 +208,7 @@ export class Model {
         this.walls = walls;
         this.nr = level.rows;
         this.nc = level.columns;
+        this.currentLevel = level;
 
         this.cells = [];
 
@@ -227,6 +228,9 @@ export class Model {
     ninjaMove(direction){
         
         let cell = this.getCell(direction)
+        if(cell === undefined){
+            return false;
+        }
         if(this.ninjase.move(cell, direction))
         {
             if(cell.whatType() === 'unlocked'){
