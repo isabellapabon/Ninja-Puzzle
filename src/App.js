@@ -6,7 +6,7 @@ import { level3 } from './model/Puzzle';
 import { redrawCanvas} from './boundary/boundary.js'
 import { Model } from './model/Model.js';
 import { Up, Down, Left, Right } from './model/Model.js';
-import { moveNinja } from './controller/controller';
+import { moveNinja, pickUpKey } from './controller/controller';
 import { layout, Layout } from './model/Layout';
 
 
@@ -34,6 +34,11 @@ function App() {
     forceRedraw(redraw+1)   // react to changes, if model has changed.
   }
 
+  const pickUpKeyHandler = () => {
+    pickUpKey(model);
+    forceRedraw(redraw+1)
+  }
+
 
   return (
     <main style ={layout.Appmain} ref={appRef}>
@@ -51,7 +56,7 @@ function App() {
       <button style={layout.leftbutton} onClick={(e) => moveNinjaHandler(Left)}>&#8592;</button>
       <button style ={layout.rightbutton} onClick={(e) => moveNinjaHandler(Right)}>&#8594;</button>
       <button style={layout.downbutton}onClick={(e) => moveNinjaHandler(Down)}>&#8595;</button>
-      <button style={layout.pickUpKeyButton}>&#8711;</button>
+      <button style={layout.pickUpKeyButton}onClick={(e) => pickUpKeyHandler()}>&#8711;</button>
       <button style={layout.resetButton}>Reset</button>
       <button style={layout.level1Button}>Level One</button>
       <button style={layout.level2Button}>Level Two</button>

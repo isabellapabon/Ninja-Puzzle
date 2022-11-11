@@ -1,5 +1,6 @@
 import {BOXSIZE, KEYSIZE, KEYOFFSET, OFFSET} from '../const.js'
 import {Square} from '../boundary/boundary.js';
+import { toHaveDisplayValue } from '@testing-library/jest-dom/dist/matchers.js';
 
 export class MoveType{
     constructor(dr, dc, direction){
@@ -58,10 +59,6 @@ export class Cell {
     }
 
     draw(ctx) {
-        if(this.whatType() === 'wall')
-        {
-           ctx.fillStyle = 'black'; 
-        }
         ctx.fillStyle = this.color;
         let sq = this.compute();
         ctx.beginPath();
@@ -77,9 +74,6 @@ export class Ninjase extends Cell {
     }
     move(cell, direction) {
         if(this.canMoveTo(cell)) {
-            if(cell.whatType() === 'key'){
-                this.pickUpKey(cell);
-            }
             this.row += direction.deltar;
             this.column += direction.deltac;
             return true;
@@ -108,7 +102,7 @@ export class Ninjase extends Cell {
             cell.whatType() === 'key'){
             return true;
         }
-        if(cell.type() === 'door'){
+        if(cell.whatType() === 'door'){
             if(cell.unlock(this.key)){
                 this.key = null;
                 return true;
@@ -121,7 +115,7 @@ export class Ninjase extends Cell {
 
 export class Wall extends Cell{
     constructor(row, column){
-        super(row, column);
+        super(row, column, 'black');
     }
     whatType(){
         return 'wall';
@@ -143,7 +137,7 @@ export class Door extends Cell{
         }
         if(key.getColor() === this.color){
             this.locked = false;
-            this.type = 'cell';
+            this.type = 'unlocked';
             return true;
         }
         return false;
@@ -231,31 +225,60 @@ export class Model {
     }
 
     ninjaMove(direction){
-        if(this.ninjase.move(this.getCell(direction), direction)){
+        // check if in bounds
+        let cell = this.getCell(direction)
+        if(this.ninjase.move(cell, direction))
+        {
+            if(cell.whatType() === 'unlocked'){
+                for(let i = 0; i < this.doors.length; i++){
+                    let door = this.doors[i];
+                    if(cell.location().isEqual(door.location())){
+                       this.doors.splice(i,1);
+                       break;
+                    }
+                }
+            }
             this.numMoves++;
         }
+        return false;
     }
 
 
     getCell(direction){
         let location = this.ninjase.location();
         let directionCoordinate = location.getCoordinateForDirection(direction);
-        this.doors.forEach(door => { 
+
+        for(let i = 0; i < this.doors.length; i++){
+            let door = this.doors[i];
             if(door.location().isEqual(directionCoordinate)){
                 return door;
             }
-        });
-        this.keys.forEach(key => {
-            if(key.location().isEqual(directionCoordinate)){
-                return key;
-            }
-        });
-        this.walls.forEach(wall => {
+        }
+
+        for(let i = 0; i < this.walls.length; i++){
+            let wall = this.walls[i];
             if(wall.location().isEqual(directionCoordinate)){
                 return wall;
             }
-        });
+        }
+
+        for(let i = 0; i < this.keys.length; i++){
+            let key = this.keys[i];
+            if(key.location().isEqual(directionCoordinate)){
+                return key;
+            }
+        }
 
         return this.cells[directionCoordinate.row][directionCoordinate.column];
+    }
+
+    pickUpKey(){
+        for(let i = 0; i < this.keys.length; i++){
+            let key = this.keys[i];
+            if(this.ninjase.location().isEqual(key.location())){
+               this.ninjase.pickUpKey(key);
+               this.keys.splice(i,1);
+            }
+        }
     }
 }
